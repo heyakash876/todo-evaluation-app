@@ -118,3 +118,55 @@ The app will now be running at [http://localhost:5173/](http://localhost:5173/).
 ## Credits
 
 licensed under [MIT](https://github.com/maciekt07/TodoApp/blob/main/LICENSE).
+
+
+
+# 📝 Todo App Enhancements
+
+This branch introduces **priority support** and **filtering improvements** to the Todo App, making it easier to organize, filter, and visualize tasks.
+
+---
+
+## 🚀 Features
+
+### 🔍 Filtering
+- **Date filters** on Home:  
+  - `All Tasks` | `Today` | `This Week` | `Custom Range`
+- **FilterBar**  
+  - Centered layout  
+  - Shared state handled via `FilterContext`
+
+### ⚡ Priority Support
+- New `TaskPriority` type: `low | medium | high | critical`
+- **PrioritySelect**  
+  - Dropdown added to **AddTask** and **EditTask** forms  
+  - Consistent dropdown width (`400px`) with other controls  
+- **PriorityBadge**  
+  - Compact design with colored circle + label  
+  - Light background and colored text  
+  - Displayed on task cards for visibility  
+
+---
+
+## 📂 Key Files
+
+- **Filters**
+  - `src/components/FilterBar.tsx` → Filtering UI  
+  - `src/contexts/FilterContext.tsx` → Shared filter state  
+  - `src/utils/dateUtils.ts` → Date manipulation helpers  
+
+- **Priority**
+  - `src/types/user.ts` → Defines `TaskPriority` type  
+  - `src/components/PrioritySelect.tsx` → Priority dropdown  
+  - `src/components/PriorityBadge.tsx` → Priority badge display  
+
+- **Pages**
+  - `src/pages/AddTask.tsx` → Priority selection integrated with task creation  
+  - `src/pages/EditTask.tsx` → Priority editing support  
+  - `src/pages/Home.tsx` → Task dashboard (date filters)  
+  - `src/components/tasks/TaskItem.tsx` → Task card showing `PriorityBadge`  
+
+---
+
+
+
