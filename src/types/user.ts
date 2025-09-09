@@ -50,6 +50,7 @@ export interface Task {
    */
   date: Date;
   deadline?: Date;
+  priority?: "low" | "medium" | "high" | "critical";
   category?: Category[];
   lastSave?: Date;
   sharedBy?: string;
@@ -93,3 +94,4 @@ export interface AppSettings {
 
 export type SortOption = "dateCreated" | "dueDate" | "alphabetical" | "custom";
 export type ReduceMotionOption = "system" | "on" | "off";
+export type TaskPriority = "Critical" | "High" | "Medium" | "Low";

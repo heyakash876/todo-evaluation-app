@@ -5,7 +5,7 @@ import { AddTaskButton, Container, StyledInput } from "../styles";
 import { AddTaskRounded, CancelRounded } from "@mui/icons-material";
 import { IconButton, InputAdornment, Tooltip } from "@mui/material";
 import { DESCRIPTION_MAX_LENGTH, TASK_NAME_MAX_LENGTH } from "../constants";
-import { ColorPicker, TopBar, CustomEmojiPicker } from "../components";
+import { ColorPicker, TopBar, CustomEmojiPicker, PrioritySelect } from "../components";
 import { UserContext } from "../contexts/UserContext";
 import { useStorageState } from "../hooks/useStorageState";
 import { useTheme } from "@emotion/react";
@@ -27,6 +27,9 @@ const AddTask = () => {
     "sessionStorage",
   );
   const [deadline, setDeadline] = useStorageState<string>("", "deadline", "sessionStorage");
+  const [priority, setPriority] = useStorageState<
+    "low" | "medium" | "high" | "critical" | undefined
+  >(undefined, "priority", "sessionStorage");
   const [nameError, setNameError] = useState<string>("");
   const [descriptionError, setDescriptionError] = useState<string>("");
   const [selectedCategories, setSelectedCategories] = useStorageState<Category[]>(
@@ -110,6 +113,7 @@ const AddTask = () => {
       color,
       date: new Date(),
       deadline: deadline !== "" ? new Date(deadline) : undefined,
+      priority,
       category: selectedCategories ? selectedCategories : [],
     };
 
@@ -129,7 +133,15 @@ const AddTask = () => {
       },
     );
 
-    const itemsToRemove = ["name", "color", "description", "emoji", "deadline", "categories"];
+    const itemsToRemove = [
+      "name",
+      "color",
+      "description",
+      "emoji",
+      "deadline",
+      "categories",
+      "priority",
+    ];
     itemsToRemove.map((item) => sessionStorage.removeItem(item));
   };
 
@@ -224,6 +236,7 @@ const AddTask = () => {
             </div>
           )}
         </InputThemeProvider>
+        <PrioritySelect value={priority} onChange={setPriority} width="400px" />
         <ColorPicker
           color={color}
           width="400px"

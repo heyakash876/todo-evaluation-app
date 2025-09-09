@@ -9,6 +9,8 @@ export { BottomNav } from "./BottomNav";
 export { CategorySelect } from "./CategorySelect";
 export { ColorPicker } from "./ColorPicker";
 export { CategoryBadge } from "./CategoryBadge";
+export { default as PriorityBadge } from "./PriorityBadge";
+export { default as PrioritySelect } from "./PrioritySelect";
 export { TaskIcon } from "./TaskIcon";
 export { Loading } from "./Loading";
 export { CustomDialogTitle } from "./DialogTitle";

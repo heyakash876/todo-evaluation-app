@@ -1,7 +1,7 @@
 import { useRef, memo, useContext } from "react";
 import { Emoji } from "emoji-picker-react";
 import { DoneRounded, PushPinRounded, Link, DragIndicatorRounded } from "@mui/icons-material";
-import { Tooltip } from "@mui/material";
+import { Tooltip, Box } from "@mui/material";
 import type { Task, UUID } from "../../types/user";
 import {
   TaskContainer,
@@ -25,6 +25,7 @@ import {
 import { calculateDateDifference, formatDate, getFontColor, systemInfo } from "../../utils";
 import { RenderTaskDescription } from "./RenderTaskDescription";
 import { CategoryBadge } from "..";
+import PriorityBadge from "../PriorityBadge";
 import { UserContext } from "../../contexts/UserContext";
 import { TaskContext } from "../../contexts/TaskContext";
 import { useSortable } from "@dnd-kit/sortable";
@@ -244,6 +245,17 @@ export const TaskItem = memo(
             </TaskCategoriesContainer>
           )}
         </TaskInfo>
+        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", mb: 1 }}>
+          <span />
+          {task.priority && (
+            <PriorityBadge
+              priority={
+                (task.priority.charAt(0).toUpperCase() + task.priority.slice(1).toLowerCase()) as any
+              }
+              sx={{ mb: 1 }}
+            />
+          )}
+        </Box>
         <TaskActionsContainer>{actions}</TaskActionsContainer>
       </TaskContainer>
     );

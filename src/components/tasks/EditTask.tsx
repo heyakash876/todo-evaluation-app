@@ -11,7 +11,7 @@ import {
   Tooltip,
 } from "@mui/material";
 import { useContext, useEffect, useMemo, useState } from "react";
-import { ColorPicker, CustomDialogTitle, CustomEmojiPicker } from "..";
+import { ColorPicker, CustomDialogTitle, CustomEmojiPicker, PrioritySelect } from "..";
 import { DESCRIPTION_MAX_LENGTH, TASK_NAME_MAX_LENGTH } from "../../constants";
 import { UserContext } from "../../contexts/UserContext";
 import { DialogBtn } from "../../styles";
@@ -83,6 +83,7 @@ export const EditTask = ({ open, task, onClose }: EditTaskProps) => {
             emoji: editedTask.emoji || undefined,
             description: editedTask.description || undefined,
             deadline: editedTask.deadline || undefined,
+            priority: editedTask.priority,
             category: editedTask.category || undefined,
             lastSave: new Date(),
           };
@@ -181,6 +182,10 @@ export const EditTask = ({ open, task, onClose }: EditTaskProps) => {
                   : `${editedTask?.name?.length}/${TASK_NAME_MAX_LENGTH}`
               : "Name is required"
           }
+        />
+        <PrioritySelect
+          value={editedTask?.priority}
+          onChange={(p) => setEditedTask((prev) => ({ ...(prev as Task), priority: p }))}
         />
         <StyledInput
           label="Description"

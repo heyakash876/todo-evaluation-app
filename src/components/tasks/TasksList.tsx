@@ -30,6 +30,8 @@ import { DialogBtn } from "../../styles";
 import { ColorPalette } from "../../theme/themeConfig";
 import type { Category, Task, UUID } from "../../types/user";
 import { getFontColor, showToast } from "../../utils";
+import { useFilterContext } from "../../contexts/FilterContext";
+import { isInRange, isInThisWeek, isToday } from "../../utils/dateUtils";
 import {
   NoTasks,
   RingAlarm,
@@ -233,7 +235,33 @@ export const TasksList: React.FC = () => {
     [search, selectedCatId, user.settings?.doneToBottom, sortOption],
   );
 
-  const orderedTasks = useMemo(() => reorderTasks(user.tasks), [user.tasks, reorderTasks]);
+  const { dateFilter } = useFilterContext();
+  const filtered = useMemo(() => {
+    switch (dateFilter.type) {
+      case "today":
+        return user.tasks.filter(
+          (t) => isToday(new Date(t.date)) || (t.deadline ? isToday(new Date(t.deadline)) : false),
+        );
+      case "thisWeek":
+        return user.tasks.filter(
+          (t) =>
+            isInThisWeek(new Date(t.date)) ||
+            (t.deadline ? isInThisWeek(new Date(t.deadline)) : false),
+        );
+      case "range":
+        return user.tasks.filter(
+          (t) =>
+            isInRange(new Date(t.date), dateFilter.startDate, dateFilter.endDate) ||
+            (t.deadline
+              ? isInRange(new Date(t.deadline), dateFilter.startDate, dateFilter.endDate)
+              : false),
+        );
+      default:
+        return user.tasks;
+    }
+  }, [user.tasks, dateFilter]);
+
+  const orderedTasks = useMemo(() => reorderTasks(filtered), [filtered, reorderTasks]);
 
   const confirmDeleteTask = () => {
     if (!selectedTaskId) {

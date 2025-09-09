@@ -21,6 +21,8 @@ import { UserContext } from "../contexts/UserContext";
 import { useResponsiveDisplay } from "../hooks/useResponsiveDisplay";
 import { useNavigate } from "react-router-dom";
 import { AnimatedGreeting } from "../components/AnimatedGreeting";
+import FilterBar from "../components/FilterBar";
+import { FilterProvider } from "../contexts/FilterContext";
 import { showToast } from "../utils";
 
 const TasksList = lazy(() =>
@@ -105,117 +107,120 @@ const Home = () => {
   };
 
   return (
-    <>
-      <GreetingHeader>
-        <Emoji unified="1f44b" emojiStyle={emojisStyle} /> &nbsp; {timeGreeting}
-        {name && (
-          <span translate="no">
-            , <span>{name}</span>
-          </span>
+    <FilterProvider>
+      <>
+        <GreetingHeader>
+          <Emoji unified="1f44b" emojiStyle={emojisStyle} /> &nbsp; {timeGreeting}
+          {name && (
+            <span translate="no">
+              , <span>{name}</span>
+            </span>
+          )}
+        </GreetingHeader>
+
+        <AnimatedGreeting />
+
+        {!isOnline && (
+          <Offline>
+            <WifiOff /> You're offline but you can use the app!
+          </Offline>
         )}
-      </GreetingHeader>
-
-      <AnimatedGreeting />
-
-      {!isOnline && (
-        <Offline>
-          <WifiOff /> You're offline but you can use the app!
-        </Offline>
-      )}
-      {tasks.length > 0 && settings.showProgressBar && (
-        <TasksCountContainer>
-          <TasksCount glow={settings.enableGlow}>
-            <TaskCountClose
-              size="small"
-              onClick={() => {
-                updateShowProgressBar(false);
-                showToast(
-                  <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                    Progress bar hidden. You can enable it in settings.
-                    <Button
-                      variant="contained"
-                      sx={{ p: "12px 32px" }}
-                      onClick={() => updateShowProgressBar(true)}
-                      startIcon={<UndoRounded />}
-                    >
-                      Undo
-                    </Button>
-                  </span>,
-                );
-              }}
-            >
-              <CloseRounded />
-            </TaskCountClose>
-            <Box sx={{ position: "relative", display: "inline-flex" }}>
-              <StyledProgress
-                variant="determinate"
-                value={taskStats.completedTaskPercentage}
-                size={64}
-                thickness={5}
-                aria-label="Progress"
-                glow={settings.enableGlow}
-              />
-
-              <ProgressPercentageContainer
-                glow={settings.enableGlow && taskStats.completedTaskPercentage > 0}
+        {tasks.length > 0 && settings.showProgressBar && (
+          <TasksCountContainer>
+            <TasksCount glow={settings.enableGlow}>
+              <TaskCountClose
+                size="small"
+                onClick={() => {
+                  updateShowProgressBar(false);
+                  showToast(
+                    <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                      Progress bar hidden. You can enable it in settings.
+                      <Button
+                        variant="contained"
+                        sx={{ p: "12px 32px" }}
+                        onClick={() => updateShowProgressBar(true)}
+                        startIcon={<UndoRounded />}
+                      >
+                        Undo
+                      </Button>
+                    </span>,
+                  );
+                }}
               >
-                <Typography
-                  variant="caption"
-                  component="div"
-                  color="white"
-                  sx={{ fontSize: "16px", fontWeight: 600 }}
-                >{`${Math.round(taskStats.completedTaskPercentage)}%`}</Typography>
-              </ProgressPercentageContainer>
-            </Box>
-            <TaskCountTextContainer>
-              <TaskCountHeader>
-                {taskStats.completedTasksCount === 0
-                  ? `You have ${tasks.length} task${tasks.length > 1 ? "s" : ""} to complete.`
-                  : `You've completed ${taskStats.completedTasksCount} out of ${tasks.length} tasks.`}
-              </TaskCountHeader>
-              <TaskCompletionText>{taskCompletionText}</TaskCompletionText>
-              {taskStats.tasksWithDeadlineTodayCount > 0 && (
-                <span
-                  style={{
-                    opacity: 0.8,
-                    display: "inline-block",
-                  }}
+                <CloseRounded />
+              </TaskCountClose>
+              <Box sx={{ position: "relative", display: "inline-flex" }}>
+                <StyledProgress
+                  variant="determinate"
+                  value={taskStats.completedTaskPercentage}
+                  size={64}
+                  thickness={5}
+                  aria-label="Progress"
+                  glow={settings.enableGlow}
+                />
+
+                <ProgressPercentageContainer
+                  glow={settings.enableGlow && taskStats.completedTaskPercentage > 0}
                 >
-                  <TodayRounded sx={{ fontSize: "20px", verticalAlign: "middle" }} />
-                  &nbsp;Tasks due today:&nbsp;
-                  <span translate="no">
-                    {new Intl.ListFormat("en", { style: "long" }).format(
-                      taskStats.tasksDueTodayNames,
-                    )}
+                  <Typography
+                    variant="caption"
+                    component="div"
+                    color="white"
+                    sx={{ fontSize: "16px", fontWeight: 600 }}
+                  >{`${Math.round(taskStats.completedTaskPercentage)}%`}</Typography>
+                </ProgressPercentageContainer>
+              </Box>
+              <TaskCountTextContainer>
+                <TaskCountHeader>
+                  {taskStats.completedTasksCount === 0
+                    ? `You have ${tasks.length} task${tasks.length > 1 ? "s" : ""} to complete.`
+                    : `You've completed ${taskStats.completedTasksCount} out of ${tasks.length} tasks.`}
+                </TaskCountHeader>
+                <TaskCompletionText>{taskCompletionText}</TaskCompletionText>
+                {taskStats.tasksWithDeadlineTodayCount > 0 && (
+                  <span
+                    style={{
+                      opacity: 0.8,
+                      display: "inline-block",
+                    }}
+                  >
+                    <TodayRounded sx={{ fontSize: "20px", verticalAlign: "middle" }} />
+                    &nbsp;Tasks due today:&nbsp;
+                    <span translate="no">
+                      {new Intl.ListFormat("en", { style: "long" }).format(
+                        taskStats.tasksDueTodayNames,
+                      )}
+                    </span>
                   </span>
-                </span>
-              )}
-            </TaskCountTextContainer>
-          </TasksCount>
-        </TasksCountContainer>
-      )}
-      <Suspense
-        fallback={
-          <Box display="flex" justifyContent="center" alignItems="center">
-            <CircularProgress />
-          </Box>
-        }
-      >
-        <TasksList />
-      </Suspense>
-      {!isMobile && (
-        <Tooltip title={tasks.length > 0 ? "Add New Task" : "Add Task"} placement="left">
-          <AddButton
-            animate={tasks.length === 0}
-            glow={settings.enableGlow}
-            onClick={() => n("add")}
-            aria-label="Add Task"
-          >
-            <AddRounded style={{ fontSize: "44px" }} />
-          </AddButton>
-        </Tooltip>
-      )}
-    </>
+                )}
+              </TaskCountTextContainer>
+            </TasksCount>
+          </TasksCountContainer>
+        )}
+        <FilterBar />
+        <Suspense
+          fallback={
+            <Box display="flex" justifyContent="center" alignItems="center">
+              <CircularProgress />
+            </Box>
+          }
+        >
+          <TasksList />
+        </Suspense>
+        {!isMobile && (
+          <Tooltip title={tasks.length > 0 ? "Add New Task" : "Add Task"} placement="left">
+            <AddButton
+              animate={tasks.length === 0}
+              glow={settings.enableGlow}
+              onClick={() => n("add")}
+              aria-label="Add Task"
+            >
+              <AddRounded style={{ fontSize: "44px" }} />
+            </AddButton>
+          </Tooltip>
+        )}
+      </>
+    </FilterProvider>
   );
 };
 
